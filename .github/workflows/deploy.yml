@@ -23,7 +23,49 @@ jobs:
       run: |
         pip install google-api-python-client google-auth paramiko
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        # Uncommenname: Auto Update Portfolio
+
+on:
+  schedule:
+    - cron: '0 4 * * *' # Runs automatically every day at 04:00 UTC
+  workflow_dispatch: # Enables manual trigger button inside GitHub UI
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python Environment
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: Install System Dependencies
+      run: |
+        pip install google-api-python-client google-auth
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         # Uncomment below if your custom script needs Playwright
+        # pip install playwright
+        # playwright install chromium
+
+    - name: Run Automation Pipeline (Fetch & Parse CV)
+      env:
+        GOOGLE_DOC_ID: ${{ secrets.GOOGLE_DOC_ID }}
+        GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+      run: |
+        python pipeline.py
+
+    - name: Deploy to Cloudflare Pages
+      uses: cloudflare/pages-action@v1
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+        directory: '.' # The directory containing your index.html and data/ foldert below if your custom script needs Playwright
         # pip install playwright
         # playwright install chromium
 
