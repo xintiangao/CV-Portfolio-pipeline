@@ -2,7 +2,7 @@ name: Auto Update Portfolio
 
 on:
   schedule:
-    - cron: "0 4 * * *" # Runs automatically every day at 04:00 UTC
+    - cron: '0 4 * * *' # Runs automatically every day at 04:00 UTC
   workflow_dispatch: # Enables manual trigger button inside GitHub UI
 
 jobs:
@@ -10,31 +10,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code Repository
-        uses: actions/checkout@v4.2.2 # Bumped to completely support the modern runtime environment
+    - name: Checkout Code Repository
+      uses: actions/checkout@v4.2.2
 
-      - name: Set up Python Environment
-        uses: actions/setup-python@v5.4.0 # Bumped to quiet deprecation alerts
-        with:
-          python-version: "3.11"
-          cache: "pip"
+    - name: Set up Python Environment
+      uses: actions/setup-python@v5.4.0
+      with:
+        python-version: '3.11'
+        cache: 'pip'
 
-      - name: Install System Dependencies
-        run: |
-          pip install google-api-python-client google-auth
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Install System Dependencies
+      run: |
+        pip install google-api-python-client google-auth
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run Automation Pipeline (Fetch & Parse CV)
-        env:
-          GOOGLE_DOC_ID: ${{ secrets.GOOGLE_DOC_ID }}
-          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-        run: |
-          python pipeline.py
+    - name: Run Automation Pipeline (Fetch & Parse CV)
+      env:
+        GOOGLE_DOC_ID: ${{ secrets.GOOGLE_DOC_ID }}
+        GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+      run: |
+        python pipeline.py
 
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: "--prod"
+    - name: Deploy to Vercel
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      run: |
+        # Pull down deployment settings using the updated engine
+        npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+        # Run production build compilation locally on the runner
+        npx vercel build --prod --token=$VERCEL_TOKEN
+        # Ship compiled code to the endpoint
+        npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
