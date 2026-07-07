@@ -2,7 +2,7 @@ name: Auto Update Portfolio
 
 on:
   schedule:
-    - cron: "0 4 * * *" # Runs automatically every day at 04:00 UTC
+    - cron: '0 4 * * *' # Runs automatically every day at 04:00 UTC
   workflow_dispatch: # Enables manual trigger button inside GitHub UI
 
 jobs:
@@ -10,38 +10,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code Repository
-        uses: actions/checkout@v4.2.2
+    - name: Checkout Code Repository
+      uses: actions/checkout@v4.2.2
 
-      - name: Set up Python Environment
-        uses: actions/setup-python@v5.4.0
-        with:
-          python-version: "3.11"
-          cache: "pip"
+    - name: Set up Python Environment
+      uses: actions/setup-python@v5.4.0
+      with:
+        python-version: '3.11'
+        cache: 'pip'
 
-      - name: Install UV Package Manager
-        uses: astral-sh/setup-uv@v5
-        with:
-          version: "latest"
+    - name: Install UV Package Manager
+      uses: astral-sh/setup-uv@v5
+      with:
+        version: "latest"
 
-      - name: Install System Dependencies
-        run: |
-          pip install google-api-python-client google-auth
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Install System Dependencies
+      run: |
+        pip install google-api-python-client google-auth
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run Automation Pipeline (Fetch & Parse CV)
-        env:
-          GOOGLE_DOC_ID: ${{ secrets.GOOGLE_DOC_ID }}
-          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-        run: |
-          python pipeline.py
+    - name: Run Automation Pipeline (Fetch & Parse CV)
+      env:
+        GOOGLE_DOC_ID: ${{ secrets.GOOGLE_DOC_ID }}
+        GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+      run: |
+        python pipeline.py
 
-      - name: Deploy to Vercel
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: |
-          npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-          npx vercel build --prod --token=$VERCEL_TOKEN
-          npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+    - name: Deploy Data File Directly to Vercel
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      run: |
+        # Force a direct layout upload, bypassing local compilation completely
+        npx vercel --prod --yes --token=$VERCEL_TOKEN
