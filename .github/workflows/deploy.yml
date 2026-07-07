@@ -2,33 +2,8 @@ name: Auto Update Portfolio
 
 on:
   schedule:
-    - cron: '0 4 * * *' # Runs automatically every day at 04:00 UTC
-  workflow_dispatch: # Enables manual trigger button inside GitHub UI
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Code Repository
-      uses: actions/checkout@v4
-
-    - name: Set up Python Environment
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-        cache: 'pip'
-
-    - name: Install System Dependencies
-      run: |
-        pip install google-api-python-client google-auth paramiko
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # Uncommenname: Auto Update Portfolio
-
-on:
-  schedule:
-    - cron: '0 4 * * *' # Runs automatically every day at 04:00 UTC
-  workflow_dispatch: # Enables manual trigger button inside GitHub UI
+    - cron: '0 4 * * *' 
+  workflow_dispatch: 
 
 jobs:
   build-and-deploy:
@@ -59,29 +34,10 @@ jobs:
       run: |
         python pipeline.py
 
-    - name: Deploy to Cloudflare Pages
-      uses: cloudflare/pages-action@v1
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
       with:
-        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
-        directory: '.' # The directory containing your index.html and data/ foldert below if your custom script needs Playwright
-        # pip install playwright
-        # playwright install chromium
-
-    - name: Configure Server SSH Key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-
-    - name: Run Automation Pipeline
-      env:
-        GOOGLE_DOC_ID: ${{ secrets.GOOGLE_DOC_ID }}
-        GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-        SERVER_HOST: ${{ secrets.SERVER_HOST }}
-        SERVER_USER: ${{ secrets.SERVER_USER }}
-        SERVER_REMOTE_DIR: ${{ secrets.SERVER_REMOTE_DIR }}
-      run: |
-        python pipeline.py
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod' # Forces a production deployment
