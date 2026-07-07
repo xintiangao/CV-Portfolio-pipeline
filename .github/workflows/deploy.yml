@@ -42,5 +42,5 @@ jobs:
         VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
         VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       run: |
-        # Force a direct layout upload, bypassing local compilation completely
-        npx vercel --prod --yes --token=$VERCEL_TOKEN
+        # Added --force to push past the configuration mismatch warning
+        npx vercel --prod --yes --force --token=$VERCEL_TOKEN
