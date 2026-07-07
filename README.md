@@ -1,10 +1,10 @@
-# Google Docs to Independent Portfolio Sync Pipeline 🚀
+# Google Docs to Independent Portfolio Sync Pipeline 
 
-An automated CI/CD pipeline to use **Google Docs as a Headless CMS** for a standalone custom web portfolio (e.g., syncing data layers directly to a remote production web host).
+An automated CI/CD pipeline to use Google Docs as a Headless CMS for a standalone custom web portfolio (e.g., syncing data layers directly to a remote production web host).
 
-## 🛠️ Configuration & Secrets Layout
+Configuration & Secrets Layout
 
-To deploy this yourself, fork this repository and add the following **GitHub Actions Secrets** under `Settings -> Secrets and variables -> Actions`:
+To deploy this yourself, fork this repository and add the following GitHub Actions Secrets under `Settings -> Secrets and variables -> Actions`:
 
 * `GOOGLE_DOC_ID`: The unique file string found in your Google Doc URL.
 * `GOOGLE_SERVICE_ACCOUNT_JSON`: The complete plaintext content of your Google Service Account JSON Key file.
