@@ -3,3 +3,5 @@ __pycache__/
 current-cv.docx
 .env
 *.json
+.vercel
+.env*

@@ -2,8 +2,8 @@ name: Auto Update Portfolio
 
 on:
   schedule:
-    - cron: '0 4 * * *' 
-  workflow_dispatch: 
+    - cron: '0 4 * * *' # Runs automatically every day at 04:00 UTC
+  workflow_dispatch: # Enables manual trigger button inside GitHub UI
 
 jobs:
   build-and-deploy:
@@ -23,9 +23,6 @@ jobs:
       run: |
         pip install google-api-python-client google-auth
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # Uncomment below if your custom script needs Playwright
-        # pip install playwright
-        # playwright install chromium
 
     - name: Run Automation Pipeline (Fetch & Parse CV)
       env:
@@ -40,4 +37,4 @@ jobs:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        vercel-args: '--prod' # Forces a production deployment
+        vercel-args: '--prod'
