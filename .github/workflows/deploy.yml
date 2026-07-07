@@ -34,10 +34,9 @@ jobs:
     - name: Deploy to Vercel
       env:
         VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       run: |
-        # Pull down deployment settings using the updated engine
         npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-        # Run production build compilation locally on the runner
         npx vercel build --prod --token=$VERCEL_TOKEN
-        # Ship compiled code to the endpoint
         npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
