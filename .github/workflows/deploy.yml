@@ -19,8 +19,8 @@ jobs:
         python-version: '3.11'
         cache: 'pip'
 
-    - name: Install UV Package Manager # This satisfies Vercel's internal pull detector
-      uses: astral-sh/setup-uv-action@v5
+    - name: Install UV Package Manager
+      uses: astral-sh/setup-uv@v5
       with:
         version: "latest"
 
