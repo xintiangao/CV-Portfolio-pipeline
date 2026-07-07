@@ -19,6 +19,11 @@ jobs:
         python-version: '3.11'
         cache: 'pip'
 
+    - name: Install UV Package Manager # This satisfies Vercel's internal pull detector
+      uses: astral-sh/setup-uv-action@v5
+      with:
+        version: "latest"
+
     - name: Install System Dependencies
       run: |
         pip install google-api-python-client google-auth
